@@ -1,9 +1,7 @@
 package org.daniels.examples.dropwizard.resource;
 
-import com.google.common.base.Optional;
-import com.codahale.metrics.annotation.Timed;
+import java.util.concurrent.atomic.AtomicLong;
 
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -12,7 +10,8 @@ import javax.ws.rs.core.MediaType;
 
 import org.daniels.examples.dropwizard.core.Saying;
 
-import java.util.concurrent.atomic.AtomicLong;
+import com.codahale.metrics.annotation.Timed;
+import com.google.common.base.Optional;
 
 @Path("/hello-world")
 @Produces(MediaType.APPLICATION_JSON)
@@ -29,8 +28,9 @@ public class HelloWorldResource {
 
 	@GET
 	@Timed
-	public Saying sayHello(@QueryParam("name") @DefaultValue("dupa") String name) {
-		final String value = String.format(template, name);
+	public Saying sayHello(@QueryParam("name") Optional<String> name) {
+		final String value = String.format(template, name.or(defaultName));
 		return new Saying(counter.incrementAndGet(), value);
 	}
+	
 }
